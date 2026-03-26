@@ -328,8 +328,8 @@ router.post('/:id/images', requireAuth, async (req, res) => {
     return res.status(400).json({ message: 'mode must be camera or upload' });
   }
 
-  if (mode === 'camera' && images.length !== 3) {
-    return res.status(400).json({ message: 'camera mode requires exactly 3 images' });
+  if (mode === 'camera' && images.length !== 4) {
+    return res.status(400).json({ message: 'camera mode requires exactly 4 images (center, slight_left, slight_right, chin_up)' });
   }
   if (mode === 'upload' && images.length !== 1) {
     return res.status(400).json({ message: 'upload mode requires exactly 1 image' });
