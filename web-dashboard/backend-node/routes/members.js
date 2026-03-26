@@ -46,7 +46,7 @@ function detectPythonBin() {
 
 const PYTHON_BIN = process.env.PYTHON_BIN || detectPythonBin();
 const PYTHON_SCRIPT = process.env.PYTHON_SCRIPT ||
-  path.join(__dirname, "../python/process_face.py").replace(/\\/g, "/");
+  path.join(__dirname, "../../python-services/face_processor.py").replace(/\\/g, "/");
 
 if (!require("fs").existsSync(PYTHON_SCRIPT.replace(/\//g, "\\"))) {
   console.error(`[FATAL] Python script not found at: ${PYTHON_SCRIPT}`);
@@ -278,21 +278,24 @@ router.post('/:id/validate-frame', requireAuth, async (req, res) => {
           if (stderrLines.length) console.error("[Python error]:", stderrLines.join("\n"));
         }
 
-        // Fix B2: robust JSON parsing
-        const jsonMatches = [...stdout.matchAll(/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/g)];
-        const lastJson = jsonMatches.length ? jsonMatches[jsonMatches.length - 1][1] : null;
+        // Fix B2: robust JSON parsing by extracting the last valid JSON line
+        const lines = stdout.split(/\r?\n/);
+        let parsedJSON = null;
+        for (let i = lines.length - 1; i >= 0; i--) {
+          const line = lines[i].trim();
+          if (line.startsWith('{')) {
+            try {
+              parsedJSON = JSON.parse(line);
+              break;
+            } catch (e) {}
+          }
+        }
 
-        if (!lastJson) {
+        if (!parsedJSON) {
           console.error("[Python stdout raw]:", JSON.stringify(stdout.substring(0, 300)));
           return resolve({ valid: false, reason: 'Invalid response from validation script' });
         }
-
-        try {
-          resolve(JSON.parse(lastJson));
-        } catch (e) {
-          console.error(`JSON parse failed: ${e.message}. Raw: ${lastJson.substring(0, 200)}`);
-          resolve({ valid: false, reason: 'Invalid response from validation script' });
-        }
+        resolve(parsedJSON);
       });
 
       py.on('error', (err) => {
@@ -337,21 +340,25 @@ router.post('/:id/images', requireAuth, async (req, res) => {
 
   const tmpFiles = [];
   try {
-    const embeddingsDir = process.env.EMBEDDINGS_DIR || path.join(__dirname, '../../data/embeddings');
+    const relPath = (member && member.imagepath) || getImagePath(orgName, orgId, personId);
+    const mediaFolder = path.join(MEDIA_ROOT, relPath);
+    if (!fs.existsSync(mediaFolder)) {
+      fs.mkdirSync(mediaFolder, { recursive: true });
+    }
 
     let spawnArgs = [];
     if (mode === 'camera') {
       const jobFile = path.join(os.tmpdir(), `job-${Date.now()}-${Math.floor(Math.random() * 10000)}.json`);
       fs.writeFileSync(jobFile, JSON.stringify(images));
       tmpFiles.push(jobFile);
-      spawnArgs = [PYTHON_SCRIPT, '--mode', 'camera', '--input', jobFile, '--member_id', String(personId), '--output_dir', embeddingsDir];
+      spawnArgs = [PYTHON_SCRIPT, '--mode', 'enroll', '--input', jobFile, '--member_id', String(personId), '--output_dir', mediaFolder];
     } else {
       const imgFile = path.join(os.tmpdir(), `upload-${Date.now()}-${Math.floor(Math.random() * 10000)}.jpg`);
       const b64 = images[0].base64 || images[0].dataUrl;
       const base64Clean = (b64 || '').replace(/^data:image\/\w+;base64,/, "");
       fs.writeFileSync(imgFile, Buffer.from(base64Clean, "base64"));
       tmpFiles.push(imgFile);
-      spawnArgs = [PYTHON_SCRIPT, '--mode', 'upload', '--input', imgFile, '--member_id', String(personId), '--output_dir', embeddingsDir];
+      spawnArgs = [PYTHON_SCRIPT, '--mode', 'enroll', '--input', imgFile, '--member_id', String(personId), '--output_dir', mediaFolder];
     }
 
     const runPython = () => new Promise((resolve, reject) => {
@@ -389,24 +396,28 @@ router.post('/:id/images', requireAuth, async (req, res) => {
           if (stderrLines.length) console.error("[Python error]:", stderrLines.join("\n"));
         }
 
-        const jsonMatches = [...stdout.matchAll(/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/g)];
-        const lastJson = jsonMatches.length ? jsonMatches[jsonMatches.length - 1][1] : null;
+        const lines = stdout.split(/\r?\n/);
+        let parsedJSON = null;
+        for (let i = lines.length - 1; i >= 0; i--) {
+          const line = lines[i].trim();
+          if (line.startsWith('{')) {
+            try {
+              parsedJSON = JSON.parse(line);
+              break;
+            } catch (e) {}
+          }
+        }
 
-        if (!lastJson) {
+        if (!parsedJSON) {
           return reject(new Error(
             `Python returned no JSON. Exit code: ${code}. Stdout: ${stdout.substring(0, 150)}. Stderr: ${stderr.substring(0, 150)}`
           ));
         }
 
-        try {
-          const result = JSON.parse(lastJson);
-          if (result.success) {
-            resolve(result);
-          } else {
-            reject(new Error(result.error || 'Unknown python error'));
-          }
-        } catch (e) {
-          reject(new Error(`Failed to parse response: ${e.message}`));
+        if (parsedJSON.success) {
+          resolve(parsedJSON);
+        } else {
+          reject(new Error(parsedJSON.error || 'Unknown python error'));
         }
       });
       py.on('error', err => {

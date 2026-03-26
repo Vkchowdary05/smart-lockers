@@ -32,8 +32,8 @@ function getIdColumn(mode) {
 }
 
 function getImagePath(orgName, orgId, personId) {
-  // Relative path stored in DB: OrgName/OrgId/PersonId
-  return `${orgName}/${orgId}/${personId}`;
+  // Relative path stored in DB: OrgName/PersonId
+  return `${orgName}/${personId}`;
 }
 
 module.exports = {
