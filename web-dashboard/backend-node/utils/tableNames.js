@@ -4,7 +4,7 @@
  * Convention (daemon-compatible):
  *   member table : {orgNameClean}_{orgId}
  *   logs table   : {orgNameClean}_{orgId}_logs
- *   live table   : {orgNameClean}_{orgId}_live   ← NEW
+ *   live table   : {orgNameClean}_{orgId}_live
  *
  * orgNameClean = org_name.replace(/ /g, '').toLowerCase()
  */
@@ -21,10 +21,6 @@ function getLogsTableName(orgName, orgId) {
   return `${cleanOrgName(orgName)}_${orgId}_logs`;
 }
 
-function getLiveTableName(orgName, orgId) {
-  return `${cleanOrgName(orgName)}_${orgId}_live`;
-}
-
 function getIdColumn(mode) {
   // mode=true  → private org → employee_id
   // mode=false → public org  → member_id
@@ -32,15 +28,15 @@ function getIdColumn(mode) {
 }
 
 function getImagePath(orgName, orgId, personId) {
-  // Relative path stored in DB: OrgName/PersonId
-  return `${orgName}/${personId}`;
+  // Relative path stored in DB: OrgName/OrgId/PersonId
+  // e.g. ReddyLabs/101/42
+  return `${orgName}/${orgId}/${personId}`;
 }
 
 module.exports = {
   cleanOrgName,
   getMemberTableName,
   getLogsTableName,
-  getLiveTableName,
   getIdColumn,
   getImagePath,
 };

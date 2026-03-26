@@ -34,7 +34,6 @@ const authRouter       = require('./routes/auth');
 const passwordRouter   = require('./routes/password');
 const membersRouter    = require('./routes/members');
 const lockersRouter    = require('./routes/lockers');
-const liveRouter       = require('./routes/live');
 const superAdminRouter = require('./routes/superAdmin');
 const syncRouter       = require('./routes/sync');
 
@@ -42,7 +41,6 @@ app.use('/api/admin',        authRouter);
 app.use('/api/admin',        passwordRouter);
 app.use('/api/members',      membersRouter);
 app.use('/api/lockers',      lockersRouter);
-app.use('/api',              liveRouter);          // /api/live-lockers, /api/check-in, /api/check-out
 app.use('/api/super-admin',  superAdminRouter);
 app.use('/api/v1/org',       syncRouter);
 

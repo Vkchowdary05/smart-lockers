@@ -55,7 +55,7 @@ if (!require("fs").existsSync(PYTHON_SCRIPT.replace(/\//g, "\\"))) {
 const { requireAuth } = require('../middlewares/auth');
 const { getOrgFromClaims, getIdColumn } = require('../middlewares/auth');
 const daemonDb = require('../services/daemonDb');
-const { getImagePath, getIdColumn: getIdCol } = require('../utils/tableNames');
+const { getImagePath, getIdColumn: getIdCol, getMemberTableName } = require('../utils/tableNames');
 
 const MEDIA_ROOT = process.env.MEDIA_ROOT
   ? path.resolve(__dirname, '..', process.env.MEDIA_ROOT)
@@ -72,15 +72,18 @@ function memberToDict(member, mode) {
   return {
     person_id: personId,
     id_type: mode ? 'employee_id' : 'member_id',
-    member_id: member.member_id,
-    employee_id: member.employee_id,
+    member_id: member.member_id || null,
+    employee_id: member.employee_id || null,
     name: member.name,
     phone_number: member.phone_number,
     imagepath: member.imagepath,
     vault_number: member.vault_number,
     checkin_timestamp: member.checkin_timestamp ? String(member.checkin_timestamp) : null,
     checkout_timestamp: member.checkout_timestamp ? String(member.checkout_timestamp) : null,
+    duration_min: member.duration_min || null,
     recent_update: member.recent_update,
+    row_checksum: member.row_checksum || null,
+    image_checksum: member.image_checksum || null,
   };
 }
 

@@ -88,7 +88,7 @@ router.get('/live', requireAuth, async (req, res) => {
         phone_number:     member.phone_number || log.phone_number || '',
         checkin_time:     checkin  ? String(checkin)  : null,
         checkout_time:    checkout ? String(checkout) : null,
-        duration_minutes: calcDuration(checkin, checkout),
+        duration_minutes: log.duration_min || calcDuration(checkin, checkout),
         status:           checkout ? 'Available' : checkin ? 'In Use' : 'Available',
       });
     }
@@ -109,7 +109,7 @@ router.get('/live', requireAuth, async (req, res) => {
         phone_number:     m.phone_number || '',
         checkin_time:     checkin  ? String(checkin)  : null,
         checkout_time:    checkout ? String(checkout) : null,
-        duration_minutes: calcDuration(checkin, checkout),
+        duration_minutes: m.duration_min || calcDuration(checkin, checkout),
         status:           (checkin && !checkout) ? 'In Use' : 'Available',
       });
     }
