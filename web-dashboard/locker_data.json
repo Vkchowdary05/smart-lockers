@@ -1,0 +1,101 @@
+{
+    "organizations": [
+        {
+            "name": "Engineering",
+            "users": [
+                {
+                    "user_id": "U1",
+                    "name": "Alice Smith",
+                    "organization_name": "Engineering"
+                },
+                {
+                    "user_id": "U2",
+                    "name": "Bob Johnson",
+                    "organization_name": "Engineering"
+                },
+                {
+                    "user_id": "U3",
+                    "name": "Charlie Davis",
+                    "organization_name": "Engineering"
+                }
+            ]
+        },
+        {
+            "name": "HR",
+            "users": [
+                {
+                    "user_id": "U4",
+                    "name": "Diana Prince",
+                    "organization_name": "HR"
+                },
+                {
+                    "user_id": "U5",
+                    "name": "Evan Wright",
+                    "organization_name": "HR"
+                }
+            ]
+        }
+    ],
+    "lockers": [
+        {
+            "locker_id": "L001",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L002",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L003",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L004",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L005",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L006",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L007",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L008",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L009",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L010",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L011",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L012",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L013",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L014",
+            "occupant_id": null
+        },
+        {
+            "locker_id": "L015",
+            "occupant_id": null
+        }
+    ]
+}

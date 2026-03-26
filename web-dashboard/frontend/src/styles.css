@@ -1,0 +1,73 @@
+/* Blue theme basics */
+:root {
+	--primary: #0b66ff;
+	--primary-contrast: #ffffff;
+	--muted: #6b7280;
+	--danger: #d9534f;
+	--card-bg: #ffffff;
+}
+
+body {
+	font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+	background: #f3f6fb;
+	color: #0f1724;
+}
+
+.card {
+	background: var(--card-bg);
+	border-radius: 8px;
+	padding: 16px;
+	box-shadow: 0 2px 8px rgba(11,102,255,0.06);
+}
+
+.primary-btn {
+	background: var(--primary);
+	color: var(--primary-contrast);
+	border: none;
+	padding: 8px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.ghost-btn {
+	background: transparent;
+	border: 1px solid var(--primary);
+	color: var(--primary);
+	padding: 6px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.ghost-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.danger-btn {
+	background: var(--danger);
+	color: white;
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: none;
+}
+
+.two-column {
+	display: grid;
+	grid-template-columns: 320px 1fr;
+	gap: 16px;
+	padding: 16px;
+}
+
+.left-panel { min-height: 300px }
+.right-panel { min-height: 300px }
+
+.dashboard-tabs { display:flex; gap:8px; margin-bottom:12px }
+.tab-btn { padding:8px 12px; border-radius:6px; border:1px solid transparent; cursor:pointer }
+.tab-btn-active { background: var(--primary); color: white }
+
+.camera-modal { position: fixed; inset:0; background: rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center }
+.camera-content { width: 480px }
+
+.error-message { color: var(--danger); margin-top:8px }
+.success-message { color: green; margin-top:8px }
+

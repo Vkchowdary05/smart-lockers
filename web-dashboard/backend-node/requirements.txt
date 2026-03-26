@@ -1,0 +1,11 @@
+# Python dependencies for face processing pipeline ONLY.
+# No Flask, no SQLAlchemy, no old backend code.
+# Compatible with Python 3.12 (also works with 3.10/3.11)
+
+opencv-python>=4.8.0
+numpy>=1.24.0
+deepface>=0.0.90
+tf-keras>=2.14.0
+pillow>=10.0.0
+scikit-learn>=1.3.0
+python-dotenv>=1.0.0
